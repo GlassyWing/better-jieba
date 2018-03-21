@@ -73,7 +73,7 @@ public class JiebaSegmenter {
      * @param tune     是否将变更同步到词典中
      * @return 所建议的词频
      */
-    public double suggestFreq(boolean tune, String... segments) {
+    public long suggestFreq(boolean tune, String... segments) {
         double percent = 1.0d;
         String words = String.join("", segments);
         for (String seg : segments) {
