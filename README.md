@@ -2,9 +2,26 @@
 ===============================
 
 首先感谢jieba (java)版分词原作者[huaban](https://github.com/huaban/jieba-analysis)，没有他的抛砖引玉，就不会有jieba java版了，更不会有现在的功能扩展版了。
-本项目为java版添加了一些api，和python原版的功能一致，具体如下：
+
+
+## 如何安装
+
+1. 下载本项目
+2. 导航到项目根目录下
+3. 执行`mvn install -DskipTests`即可安装到本地仓库
+4. 通过在`pom.xml`文件中设置如下依赖即可使用
+
+```xml
+<dependency>
+  <groupId>org.manlier</groupId>
+  <artifactId>jieba-analysis</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
 
 # 功能扩展
+
+本项目为java版添加了一些api，和python原版的功能一致，具体如下：
 
 ## 添加/修改的api
 
@@ -37,17 +54,3 @@
 
 **注意：** 禁用之后必须载入用户字典，java版本目前不能在没有字典的情况下完美运行
 
-## 如何安装
-
-1. 下载本项目
-2. 导航到项目根目录下
-3. 执行`mvn install -DskipTests`即可安装到本地仓库
-4. 通过在`pom.xml`文件中设置如下依赖即可使用
-
-```xml
-<dependency>
-  <groupId>org.manlier</groupId>
-  <artifactId>jieba-analysis</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-</dependency>
-```
