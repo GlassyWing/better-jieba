@@ -1,4 +1,4 @@
-package com.huaban.analysis.jieba.dao;
+package org.manlier.analysis.jieba.dao;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

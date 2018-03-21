@@ -1,12 +1,10 @@
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
-import com.huaban.analysis.jieba.dao.FileDictSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.nio.file.Paths;
 import java.util.List;
 
 @RunWith(JUnit4.class)

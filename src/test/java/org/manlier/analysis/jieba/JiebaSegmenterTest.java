@@ -1,20 +1,19 @@
 /**
  * 
  */
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
-import com.huaban.analysis.jieba.dao.FileDictSource;
+import org.manlier.analysis.jieba.dao.FileDictSource;
 import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
+import org.manlier.analysis.jieba.JiebaSegmenter.SegMode;
 
 
 /**

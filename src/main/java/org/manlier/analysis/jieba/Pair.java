@@ -1,4 +1,4 @@
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
 public class Pair<K> {
     public K key;

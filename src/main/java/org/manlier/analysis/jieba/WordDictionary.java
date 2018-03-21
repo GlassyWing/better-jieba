@@ -1,8 +1,8 @@
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
-import com.huaban.analysis.jieba.dao.DictSource;
-import com.huaban.analysis.jieba.dao.FileDictSource;
-import com.huaban.analysis.jieba.viterbi.FinalSeg;
+import org.manlier.analysis.jieba.dao.DictSource;
+import org.manlier.analysis.jieba.dao.FileDictSource;
+import org.manlier.analysis.jieba.viterbi.FinalSeg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

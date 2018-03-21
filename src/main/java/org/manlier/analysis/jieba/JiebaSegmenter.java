@@ -1,11 +1,11 @@
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.huaban.analysis.jieba.dao.DictSource;
-import com.huaban.analysis.jieba.viterbi.FinalSeg;
+import org.manlier.analysis.jieba.dao.DictSource;
+import org.manlier.analysis.jieba.viterbi.FinalSeg;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.processors.PublishProcessor;

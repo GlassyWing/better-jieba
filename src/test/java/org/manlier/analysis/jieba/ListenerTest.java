@@ -1,13 +1,11 @@
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.List;
 
 @RunWith(JUnit4.class)

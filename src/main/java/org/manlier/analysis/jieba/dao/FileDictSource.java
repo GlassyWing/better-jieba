@@ -1,4 +1,4 @@
-package com.huaban.analysis.jieba.dao;
+package org.manlier.analysis.jieba.dao;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.huaban.analysis.jieba.WordDictionary.USER_DICT_SUFFIX;
+import static org.manlier.analysis.jieba.WordDictionary.USER_DICT_SUFFIX;
 
 /**
  * 文件字典源

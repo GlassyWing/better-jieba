@@ -1,6 +1,6 @@
-package com.huaban.analysis.jieba;
+package org.manlier.analysis.jieba;
 
-import com.huaban.analysis.jieba.dao.FileDictSource;
+import org.manlier.analysis.jieba.dao.FileDictSource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

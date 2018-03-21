@@ -1,4 +1,4 @@
-package com.huaban.analysis.jieba.viterbi;
+package org.manlier.analysis.jieba.viterbi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 
-import com.huaban.analysis.jieba.CharacterUtil;
-import com.huaban.analysis.jieba.Pair;
-import com.huaban.analysis.jieba.Node;
+import org.manlier.analysis.jieba.CharacterUtil;
+import org.manlier.analysis.jieba.Pair;
+import org.manlier.analysis.jieba.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
