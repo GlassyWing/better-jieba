@@ -12,7 +12,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 
 public class WordDictionary {
@@ -112,13 +111,6 @@ public class WordDictionary {
                         total += freq;
                         word = addWord(word);
                         freqs.put(word, freq);
-                        for (int i = 0; i < word.length() - 1; i++) {
-                            String split = word.substring(0, i + 1).trim();
-                            if (!containsWord(split)) {
-                                split = addWord(split);
-                                freqs.put(split, 0d);
-                            }
-                        }
                     } else {
                         FinalSeg.getInstance().addForceSplit(word);
                     }
@@ -126,7 +118,7 @@ public class WordDictionary {
             });
 
             // normalize
-            normalizeFreqs();
+            normalizeFreqs(freqs);
             log.debug("main dict load finished, time elapsed {} ms", System.currentTimeMillis() - s);
         } catch (IOException e) {
             log.error(MAIN_DICT + "load failure!", e);
@@ -159,33 +151,26 @@ public class WordDictionary {
         Map<String, Double> toBeMergefreqs = new HashMap<>();
         synchronized (WordDictionary.class) {
             userDict.loadDict(charset, tokens -> {
+                // Ignore empty line
                 if (tokens.length >= 1) {
-                    // Ignore empty line
                     String word = tokens[0];
                     // Default frequency
                     double freq = 3;
                     if (tokens.length == 2)
                         freq = Integer.valueOf(tokens[1]);
                     if (freq != 0d) {
+                        total += freq;
                         word = addWord(word);
                         toBeMergefreqs.put(word, freq);
                         changeList.add(new Pair<>(word, freq));
                         count[0]++;
-                        for (int i = 0; i < word.length() - 1; i++) {
-                            String split = word.substring(0, i + 1).trim();
-                            if (!containsWord(split)) {
-                                split = addWord(split);
-                                toBeMergefreqs.put(split, 0d);
-                                changeList.add(new Pair<>(split, 0d));
-                                count[0]++;
-                            }
-                        }
                     } else {
                         FinalSeg.getInstance().addForceSplit(word);
                     }
                 }
             });
             normalizeFreqs(toBeMergefreqs);
+            freqs.putAll(toBeMergefreqs);
             log.debug("user dict {} load finished, tot words:{}, time elapsed:{} ms", userDict, count[0], System.currentTimeMillis() - s);
             return changeList;
         }
@@ -195,27 +180,7 @@ public class WordDictionary {
         return this.loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
-    /**
-     * 将词频规格化后合并到freqs中
-     *
-     * @param toBeMergeFreqs 待规格化的词语频率
-     */
-    private void normalizeFreqs(Map<String, Double> toBeMergeFreqs) {
-        toBeMergeFreqs.entrySet().parallelStream()
-                .flatMap((entry -> {
-                    entry.setValue(Math.log(entry.getValue() / total));
-                    return Stream.of(entry);
-                }))
-                .forEachOrdered(entry -> {
-                    if (freqs.containsKey(entry.getKey()))
-                        freqs.replace(entry.getKey(), entry.getValue());
-                    else
-                        freqs.put(entry.getKey(), entry.getValue());
-                    minFreq = Math.min(entry.getValue(), minFreq);
-                });
-    }
-
-    private void normalizeFreqs() {
+    private void normalizeFreqs(Map<String, Double> freqs) {
         freqs.entrySet().parallelStream()
                 .forEach(entry -> {
                     double value = Math.log(entry.getValue() / total);

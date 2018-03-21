@@ -8,8 +8,6 @@ import com.huaban.analysis.jieba.viterbi.FinalSeg;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.processors.PublishProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class JiebaSegmenter {

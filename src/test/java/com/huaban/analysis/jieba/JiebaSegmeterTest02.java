@@ -22,10 +22,14 @@ public class JiebaSegmeterTest02 {
 
     @Test
     public void testForceSplit() {
-        List<String> strings = segmenter.sentenceProcess("「台中」正确应该不会被切开");
+        List<String> strings = segmenter.sentenceProcess("台中");
+        System.out.println(String.join("/", strings));
+         strings = segmenter.sentenceProcess("「台中」正确应该不会被切开");
         System.out.println(String.join("/", strings));
 
-        segmenter.delWord("台中");
+        double freq = segmenter.suggestFreq(true,"台", "中");
+        System.out.println(freq);
+//        segmenter.delWord("台中");
         strings = segmenter.sentenceProcess("「台中」正确应该不会被切开");
         System.out.println(String.join("/", strings));
 
