@@ -3,6 +3,8 @@ package com.huaban.analysis.jieba;
 import com.huaban.analysis.jieba.dao.DictSource;
 import com.huaban.analysis.jieba.dao.FileDictSource;
 import com.huaban.analysis.jieba.viterbi.FinalSeg;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URISyntaxException;
 import java.io.IOException;
@@ -10,13 +12,14 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 
 public class WordDictionary {
     private static WordDictionary singleton;                 // 全局单列
     private static DictSource MAIN_DICT; //  默认字典采用文件字典
     private static final String CONFIG_NAME = "jieba.defaultDict";
+    private Logger log = LoggerFactory.getLogger(getClass().getSimpleName());
 
     static {
         try {
@@ -31,7 +34,8 @@ public class WordDictionary {
     public final Map<String, Double> freqs = new HashMap<>();   //  记录单词频率
     private Double minFreq = Double.MAX_VALUE;  // 单词所能达到的最大频率
     public Double total = 0.0;                 // 所有单词的频率之和
-    private DictSegment _dict;
+    private DictSegment _dict = new DictSegment((char) 0);
+    ;
     private boolean useDefaultDict = true;      // 是否使用默认字典
 
 
@@ -75,9 +79,7 @@ public class WordDictionary {
      * @param dictSource 字典源
      */
     public void init(DictSource dictSource) throws IOException {
-        synchronized (WordDictionary.class) {
-            singleton.loadUserDict(dictSource);
-        }
+        singleton.loadUserDict(dictSource);
     }
 
 
@@ -87,16 +89,20 @@ public class WordDictionary {
     public void resetDict() {
         _dict = new DictSegment((char) 0);
         freqs.clear();
+        total = 0d;
+        minFreq = Double.MAX_VALUE;
     }
 
+    public boolean isUseDefaultDict() {
+        return useDefaultDict;
+    }
 
     /**
      * Load default dict.
      */
     private void loadDict() {
-        _dict = new DictSegment((char) 0);
-        try {
 
+        try {
             long s = System.currentTimeMillis();
             MAIN_DICT.loadDict(tokens -> {
                 if (tokens.length >= 2) {
@@ -121,19 +127,9 @@ public class WordDictionary {
 
             // normalize
             normalizeFreqs();
-
-            System.out.println(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
-                    System.currentTimeMillis() - s));
+            log.debug("main dict load finished, time elapsed {} ms", System.currentTimeMillis() - s);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println(String.format(Locale.getDefault(), "%s load failure!", MAIN_DICT));
-        }
-    }
-
-    private void normalizeFreqs() {
-        for (Entry<String, Double> entry : freqs.entrySet()) {
-            entry.setValue((Math.log(entry.getValue() / total)));
-            minFreq = Math.min(entry.getValue(), minFreq);
+            log.error(MAIN_DICT + "load failure!", e);
         }
     }
 
@@ -160,39 +156,72 @@ public class WordDictionary {
         final int[] count = {0};
         long s = System.currentTimeMillis();
         List<Pair<String>> changeList = new LinkedList<>();
-        userDict.loadDict(charset, tokens -> {
-            if (tokens.length >= 1) {
-                // Ignore empty line
-                String word = tokens[0];
-                // Default frequency
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                if (freq != 0d) {
-                    word = addWord(word);
-                    freqs.put(word, Math.log(freq / total));
-                    changeList.add(new Pair<>(word, freq));
-                    count[0]++;
-                    for (int i = 0; i < word.length() - 1; i++) {
-                        String split = word.substring(0, i + 1).trim();
-                        if (!containsWord(split)) {
-                            split = addWord(split);
-                            freqs.put(split, 0d);
-                            changeList.add(new Pair<>(split, 0d));
-                            count[0]++;
+        Map<String, Double> toBeMergefreqs = new HashMap<>();
+        synchronized (WordDictionary.class) {
+            userDict.loadDict(charset, tokens -> {
+                if (tokens.length >= 1) {
+                    // Ignore empty line
+                    String word = tokens[0];
+                    // Default frequency
+                    double freq = 3;
+                    if (tokens.length == 2)
+                        freq = Integer.valueOf(tokens[1]);
+                    if (freq != 0d) {
+                        word = addWord(word);
+                        toBeMergefreqs.put(word, freq);
+                        changeList.add(new Pair<>(word, freq));
+                        count[0]++;
+                        for (int i = 0; i < word.length() - 1; i++) {
+                            String split = word.substring(0, i + 1).trim();
+                            if (!containsWord(split)) {
+                                split = addWord(split);
+                                toBeMergefreqs.put(split, 0d);
+                                changeList.add(new Pair<>(split, 0d));
+                                count[0]++;
+                            }
                         }
+                    } else {
+                        FinalSeg.getInstance().addForceSplit(word);
                     }
-                } else {
-                    FinalSeg.getInstance().addForceSplit(word);
                 }
-            }
-        });
-        System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count[0], System.currentTimeMillis() - s));
-        return changeList;
+            });
+            normalizeFreqs(toBeMergefreqs);
+            log.debug("user dict {} load finished, tot words:{}, time elapsed:{} ms", userDict, count[0], System.currentTimeMillis() - s);
+            return changeList;
+        }
     }
 
     public List<Pair<String>> loadUserDict(DictSource userDict) throws IOException {
         return this.loadUserDict(userDict, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 将词频规格化后合并到freqs中
+     *
+     * @param toBeMergeFreqs 待规格化的词语频率
+     */
+    private void normalizeFreqs(Map<String, Double> toBeMergeFreqs) {
+        toBeMergeFreqs.entrySet().parallelStream()
+                .flatMap((entry -> {
+                    entry.setValue(Math.log(entry.getValue() / total));
+                    return Stream.of(entry);
+                }))
+                .forEachOrdered(entry -> {
+                    if (freqs.containsKey(entry.getKey()))
+                        freqs.replace(entry.getKey(), entry.getValue());
+                    else
+                        freqs.put(entry.getKey(), entry.getValue());
+                    minFreq = Math.min(entry.getValue(), minFreq);
+                });
+    }
+
+    private void normalizeFreqs() {
+        freqs.entrySet().parallelStream()
+                .forEach(entry -> {
+                    double value = Math.log(entry.getValue() / total);
+                    entry.setValue(value);
+                    minFreq = Math.min(value, minFreq);
+                });
     }
 
 

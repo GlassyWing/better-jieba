@@ -8,6 +8,8 @@ import com.huaban.analysis.jieba.viterbi.FinalSeg;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.processors.PublishProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class JiebaSegmenter {
@@ -48,7 +50,7 @@ public class JiebaSegmenter {
         }
         freq = Math.max(freq + 1.0d / wordDict.total
                 , Math.pow(Math.E, wordDict.freqs.getOrDefault(segment, Math.log(1.0d / wordDict.total))));
-        long actualFreq = (long)(freq * wordDict.total);
+        long actualFreq = (long) (freq * wordDict.total);
 
         if (tune) {
             addWord(segment, actualFreq, Math.log(Math.ceil(freq)));
@@ -87,14 +89,14 @@ public class JiebaSegmenter {
      * @param actualFreq    真实频率
      * @param normalizeFreq 规格化后的频率
      */
-    private List<Pair<String>> addWord(String word, long actualFreq, double normalizeFreq) {
+    private void addWord(String word, long actualFreq, double normalizeFreq) {
         wordDict.total += actualFreq;
-        wordDict.freqs.computeIfPresent(word, (w, f) -> normalizeFreq);
-        wordDict.freqs.computeIfAbsent(word, (w) -> {
-            wordDict.addWord(w);
-            return normalizeFreq;
-        });
-
+        if (wordDict.freqs.containsKey(word)) {
+            wordDict.freqs.replace(word, normalizeFreq);
+        } else {
+            wordDict.freqs.put(word, normalizeFreq);
+            wordDict.addWord(word);
+        }
 
         List<Pair<String>> changeList = new ArrayList<>();
         changeList.add(new Pair<>(word, actualFreq));
@@ -119,7 +121,6 @@ public class JiebaSegmenter {
             this.processor.onNext(changeList);
         }
 
-        return changeList;
     }
 
     /**

@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -16,13 +17,17 @@ public class ListenerTest {
 
     @Before
     public void setUp() throws IOException {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
         segmenter.registerListener(System.out::println);
     }
 
     @Test
     public void test01() {
-        segmenter.suggestFreq(true,"中", "将");
+
         List<String> strings = segmenter.sentenceProcess("如果放到post中将出错");
+        System.out.println(String.join("/", strings));
+        segmenter.suggestFreq(true,"中", "将");
+        strings = segmenter.sentenceProcess("如果放到post中将出错");
         System.out.println(String.join("/", strings));
     }
 
