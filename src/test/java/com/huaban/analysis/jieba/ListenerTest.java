@@ -24,8 +24,18 @@ public class ListenerTest {
     @Test
     public void test01() {
 
+        System.out.println("origin");
         List<String> strings = segmenter.sentenceProcess("如果放到post中将出错");
         System.out.println(String.join("/", strings));
+        System.out.println("split1");
+        segmenter.suggestFreq(true,"中", "将");
+        strings = segmenter.sentenceProcess("如果放到post中将出错");
+        System.out.println(String.join("/", strings));
+        System.out.println("add1");
+        segmenter.suggestFreq(true, "中将");
+        strings = segmenter.sentenceProcess("如果放到post中将出错");
+        System.out.println(String.join("/", strings));
+        System.out.println("split2");
         segmenter.suggestFreq(true,"中", "将");
         strings = segmenter.sentenceProcess("如果放到post中将出错");
         System.out.println(String.join("/", strings));

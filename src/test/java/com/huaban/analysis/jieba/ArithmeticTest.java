@@ -26,4 +26,9 @@ public class ArithmeticTest {
         System.out.println(Math.log(3));
         System.out.println(Math.pow(Math.E, Math.log(0)));
     }
+
+    @Test
+    public void test04() {
+        System.out.println(Math.pow(Math.E, -0.26268660809250016));
+    }
 }

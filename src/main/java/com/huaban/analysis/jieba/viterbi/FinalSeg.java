@@ -42,33 +42,36 @@ public class FinalSeg {
 
 
     private void loadModel() {
+        // HMM隐马尔科夫模型创建
         long s = System.currentTimeMillis();
-        prevStatus = new HashMap<Character, char[]>();
-        prevStatus.put('B', new char[]{'E', 'S'});
+        prevStatus = new HashMap<>();
+        // 定义状态转移关系
+        prevStatus.put('B', new char[]{'E', 'S'});  // 表示B之前只可能是End或Single，以下类推
         prevStatus.put('M', new char[]{'M', 'B'});
         prevStatus.put('S', new char[]{'S', 'E'});
         prevStatus.put('E', new char[]{'B', 'M'});
 
-        start = new HashMap<Character, Double>();
-        start.put('B', -0.26268660809250016);
-        start.put('E', -3.14e+100);
-        start.put('M', -3.14e+100);
-        start.put('S', -1.4652633398537678);
+        start = new HashMap<>();
+        start.put('B', -0.26268660809250016);   //  概率为0.7689828525554734
+        start.put('E', -3.14e+100);             //  概率为0
+        start.put('M', -3.14e+100);             //  概率为0
+        start.put('S', -1.4652633398537678);    //  概率为0.2310171474445266
 
-        trans = new HashMap<Character, Map<Character, Double>>();
-        Map<Character, Double> transB = new HashMap<Character, Double>();
+        // 转移矩阵
+        trans = new HashMap<>();
+        Map<Character, Double> transB = new HashMap<>();
         transB.put('E', -0.510825623765990);
         transB.put('M', -0.916290731874155);
-        trans.put('B', transB);
-        Map<Character, Double> transE = new HashMap<Character, Double>();
+        trans.put('B', transB);                 // B只可能向E跟M转移，以下类推
+        Map<Character, Double> transE = new HashMap<>();
         transE.put('B', -0.5897149736854513);
         transE.put('S', -0.8085250474669937);
         trans.put('E', transE);
-        Map<Character, Double> transM = new HashMap<Character, Double>();
+        Map<Character, Double> transM = new HashMap<>();
         transM.put('E', -0.33344856811948514);
         transM.put('M', -1.2603623820268226);
         trans.put('M', transM);
-        Map<Character, Double> transS = new HashMap<Character, Double>();
+        Map<Character, Double> transS = new HashMap<>();
         transS.put('B', -0.7211965654669841);
         transS.put('S', -0.6658631448798212);
         trans.put('S', transS);
