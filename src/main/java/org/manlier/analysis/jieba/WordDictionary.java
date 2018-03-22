@@ -2,6 +2,7 @@ package org.manlier.analysis.jieba;
 
 import org.manlier.analysis.jieba.dao.DictSource;
 import org.manlier.analysis.jieba.dao.FileDictSource;
+import org.manlier.analysis.jieba.dao.InputStreamDictSource;
 import org.manlier.analysis.jieba.viterbi.FinalSeg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,8 @@ public class WordDictionary {
     private Logger log = LoggerFactory.getLogger(getClass().getSimpleName());
 
     static {
-        try {
-            MAIN_DICT = new FileDictSource(Paths.get(WordDictionary.class.getResource("/dict.txt").toURI()));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        MAIN_DICT = new InputStreamDictSource(WordDictionary.class
+                .getResourceAsStream("/dict.txt"));
     }
 
     public static String USER_DICT_SUFFIX = ".dict";        //  用户字典后缀
