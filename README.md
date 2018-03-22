@@ -8,7 +8,7 @@
 
 1. 下载本项目
 2. 导航到项目根目录下
-3. 执行`mvn install -DskipTests`即可安装到本地仓库
+3. 执行`mvn clean && mvn install -DskipTests`即可安装到本地仓库
 4. 通过在`pom.xml`文件中设置如下依赖即可使用
 
 ```xml
@@ -46,11 +46,64 @@
 
 ## 将字典加载功能抽象到DictSource类中
 
-为了方便对各种字典源进行导入，将此功能进行了抽象。默认提供了`FileDictSource`和`PureDictSource`，针对文件字典源和原始的java List&lt;String>列表。若要导入其他字典源，可继承`DictSource`接口。
+为了方便对各种字典源进行导入，将此功能进行了抽象。默认提供了`FileDictSource`和`PureDictSource`，针对文件字典源和原始的java List&lt;String>列表。
+
+示例 1：`FileDictSource`的使用
+
+```java
+wordDict.loadUserDict(new FileDictSource(Paths.get("conf")));
+```
+
+`FileDictSource`接受的参数可为目录或文件路径，若为目录，它会寻找指定目录下后缀名为`.dict`的文件，它**并不支持递归搜索**。
+
+示例 2：`PureDictSource`的使用
+
+```java
+
+List<String> records = new ArrayList<>();
+
+records.add("台北 5");
+records.add("台中 3");
+
+wordDict.loadUserDict(new PureDictSource(records));
+```
+
+若要导入其他字典源，可继承`DictSource`接口。
 
 ## 禁用默认字典
 
-通过`ystem.setProperty("jieba.defaultDict", "false")`或者设置环境参数`-Djieba.defaultDict=false`可禁用默认字典。
+通过`System.setProperty("jieba.defaultDict", "false")`或者设置环境参数`-Djieba.defaultDict=false`可禁用默认字典。
+
+示例：
+
+```java
+System.setProperty("jieba.defaultDict", "false");
+
+WordDictionary wordDict = WordDictionary.getInstance();
+
+Assert.assertTrue(!wordDict.isUseDefaultDict());
+
+wordDict.loadUserDict(new FileDictSource(Paths.get("conf")));
+```
 
 **注意：** 禁用之后必须载入用户字典，java版本目前不能在没有字典的情况下完美运行
 
+## 可注册订阅者
+
+借用rxjava2，你可以注册订阅者，用于在词典发生变更时发送通知，这对于来自数据库的字典源来说非常重要。
+
+ 例如：
+
+```java
+JiebaSegmenter segmenter = new JiebaSegmenter();
+
+Disposable disposable = segmenter.subscribe(System.out::println);
+
+segmenter.suggestFreq(true,"中", "将");
+```
+
+将收到如下的输出，表示词`中将`的频率发生变化，变为了`494`：
+
+```java
+[Candidate [key=中将, freq=494.0]]
+```
