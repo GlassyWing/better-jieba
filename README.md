@@ -52,7 +52,7 @@
 示例 1：`InputStreamDictSource`的使用
 
 ```java
-wordDict.loadUserDict(new InputStreamDictSource("user.dict"));
+wordDict.loadUserDict(new InputStreamDictSource(Files.newInputStream("user.dict")));
 ```
 
 示例 2：`FileDictSource`的使用
