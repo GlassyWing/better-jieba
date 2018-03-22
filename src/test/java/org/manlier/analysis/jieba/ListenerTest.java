@@ -16,7 +16,7 @@ public class ListenerTest {
     @Before
     public void setUp() throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
-        segmenter.registerListener(System.out::println);
+        segmenter.subscribe(System.out::println);
     }
 
     @Test
