@@ -9,6 +9,7 @@ import org.manlier.analysis.jieba.viterbi.FinalSeg;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.processors.PublishProcessor;
+import org.reactivestreams.Subscriber;
 
 
 public class JiebaSegmenter {
@@ -26,13 +27,22 @@ public class JiebaSegmenter {
     }
 
     /**
-     * 注册一个监听器，用于在词典发生变更时发送通知
+     * 注册一个订阅者，用于在词典发生变更时发送通知
      *
      * @param consumer 消费者
      * @return Disposable对象，可用于取消监听
      */
-    public Disposable registerListener(Consumer<List<Pair<String>>> consumer) {
+    public Disposable subscribe(Consumer<List<Pair<String>>> consumer) {
         return processor.subscribe(consumer);
+    }
+
+    /**
+     * 注册一个订阅者，用于在词典发生变更时发送通知
+     *
+     * @param subscriber 订阅者
+     */
+    public void subscribe(Subscriber<List<Pair<String>>> subscriber) {
+        processor.subscribe(subscriber);
     }
 
     /**
