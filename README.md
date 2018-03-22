@@ -1,7 +1,7 @@
-结巴分词(java版) jieba-analysis
+better-jieba 基于原结巴分词(java版)的功能扩展版 
 ===============================
 
-首先感谢jieba (java)版分词原作者[huaban](https://github.com/huaban/jieba-analysis)，没有他的抛砖引玉，就不会有jieba java版了，更不会有现在的功能扩展版了。
+首先感谢jieba (java)版分词原作者[huaban](https://github.com/huaban/jieba-analysis)，没有他的辛勤工作，就不会有jieba java版了，更不会有现在的功能扩展版了。
 
 
 ## 如何安装
@@ -14,14 +14,14 @@
 ```xml
 <dependency>
   <groupId>org.manlier</groupId>
-  <artifactId>jieba-analysis</artifactId>
+  <artifactId>better-jieba</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
 # 功能扩展
 
-本项目为java版添加了一些api，和python原版的功能一致，具体如下：
+本项目为原java版添加了一些api，和python原版的功能一致，具体如下：
 
 ## 添加/修改的api
 
