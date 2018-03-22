@@ -1,0 +1,13 @@
+
+# Package Files #
+**.war
+**.ear
+**.iml
+**.jar
+
+jieba-analysis.iml
+**/output*/
+**/target*/
+.idea/
+**.project
+**.settings
