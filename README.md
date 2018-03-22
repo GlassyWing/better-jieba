@@ -46,9 +46,16 @@
 
 ## 将字典加载功能抽象到DictSource类中
 
-为了方便对各种字典源进行导入，将此功能进行了抽象。默认提供了`FileDictSource`和`PureDictSource`，针对文件字典源和原始的java List&lt;String>列表。
+为了方便对各种字典源进行导入，将此功能进行了抽象。默认提供了 
+`InputStreamDictSource`、`FileDictSource`和`PureDictSource`，使用方式如下所示：
 
-示例 1：`FileDictSource`的使用
+示例 1：`InputStreamDictSource`的使用
+
+```java
+wordDict.loadUserDict(new InputStreamDictSource("user.dict"));
+```
+
+示例 2：`FileDictSource`的使用
 
 ```java
 wordDict.loadUserDict(new FileDictSource(Paths.get("conf")));
@@ -56,7 +63,7 @@ wordDict.loadUserDict(new FileDictSource(Paths.get("conf")));
 
 `FileDictSource`接受的参数可为目录或文件路径，若为目录，它会寻找指定目录下后缀名为`.dict`的文件，它**并不支持递归搜索**。
 
-示例 2：`PureDictSource`的使用
+示例 3：`PureDictSource`的使用
 
 ```java
 
