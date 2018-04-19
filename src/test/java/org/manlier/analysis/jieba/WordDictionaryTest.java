@@ -5,10 +5,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.manlier.analysis.jieba.dao.InputStreamDictSource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -53,20 +55,31 @@ public class WordDictionaryTest {
     }
 
     @Test
-    public void testUserDict() throws IOException, URISyntaxException {
-        System.setProperty("jieba.defaultDict", "false");
+    public void testDefaultDict() {
         JiebaSegmenter segmenter = new JiebaSegmenter();
-        segmenter.loadUserDict(new FileDictSource(Paths.get("conf")));
         cut(segmenter);
     }
 
+    @Test
+    public void testUserDict() throws IOException, URISyntaxException {
+//        System.setProperty("jieba.defaultDict", "false");
+        WordDictionary.getInstance().loadUserDict(new InputStreamDictSource(WordDictionary.class
+                .getResourceAsStream("/dict.txt")));
+        JiebaSegmenter segmenter = new JiebaSegmenter();
+        cut(segmenter);
+
+    }
+
     private void cut(JiebaSegmenter segmenter) {
-        List<String> strings = segmenter.sentenceProcess("大连美容美发学校中君意是你值得信赖的选择");
+        List<String> strings = segmenter.sentenceProcess("我家住在黄土高坡");
         System.out.println(String.join("/", strings));
-        double freq = segmenter.suggestFreq(true, "君意");
-        freq = segmenter.suggestFreq(true, "美容");
-        System.out.println(freq);
-        strings = segmenter.sentenceProcess("大连美容美发学校中君意是你值得信赖的选择");
-        System.out.println(String.join("/", strings));
+        double freq;
+        for (int i = 0; i < 5; i++) {
+            freq = segmenter.suggestFreq(true, "家", "住");
+            System.out.println(freq);
+            strings = segmenter.sentenceProcess("我家住在黄土高坡", false);
+            System.out.println(String.join("/", strings));
+        }
+
     }
 }
