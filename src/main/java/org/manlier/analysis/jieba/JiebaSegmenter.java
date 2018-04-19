@@ -58,8 +58,6 @@ public class JiebaSegmenter {
         for (String seg : segs) {
             freq *= Math.pow(Math.E, wordDict.freqs.getOrDefault(seg, Math.log(1.0d / wordDict.total)));
         }
-        System.out.println(segs);
-        System.out.println(wordDict.freqs.get(segs.get(0)));
 
         // 原先segment在字典中所占的比例
         double segmentPercent = Math.pow(Math.E, wordDict.freqs.getOrDefault(segment, Math.log(0d)));
@@ -70,8 +68,6 @@ public class JiebaSegmenter {
 
         // 得到将segment分出来的频率
         long actualFreq = (long) (freq * wordDict.total);
-
-        System.out.println(actualFreq);
 
 
         if (tune) {

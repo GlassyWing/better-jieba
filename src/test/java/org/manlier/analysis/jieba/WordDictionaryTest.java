@@ -62,7 +62,7 @@ public class WordDictionaryTest {
 
     @Test
     public void testUserDict() throws IOException, URISyntaxException {
-//        System.setProperty("jieba.defaultDict", "false");
+        System.setProperty("jieba.defaultDict", "false");
         WordDictionary.getInstance().loadUserDict(new InputStreamDictSource(WordDictionary.class
                 .getResourceAsStream("/dict.txt")));
         JiebaSegmenter segmenter = new JiebaSegmenter();

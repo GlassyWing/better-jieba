@@ -101,6 +101,7 @@ public class WordDictionary {
 
         try {
             long s = System.currentTimeMillis();
+            final int[] count = {0};
             MAIN_DICT.loadDict(tokens -> {
                 if (tokens.length >= 2) {
                     String word = tokens[0];
@@ -109,15 +110,15 @@ public class WordDictionary {
                         total += freq;
                         word = addWord(word);
                         freqs.put(word, freq);
+                        count[0] += 1;
                     } else {
                         FinalSeg.getInstance().addForceSplit(word);
                     }
                 }
             });
-
             // normalize
             normalizeFreqs(freqs);
-            log.debug("main dict load finished, time elapsed {} ms", System.currentTimeMillis() - s);
+            log.debug("main dict load finished, total {}, time elapsed {} ms", count[0], System.currentTimeMillis() - s);
         } catch (IOException e) {
             log.error(MAIN_DICT + "load failure!", e);
         }
@@ -154,8 +155,8 @@ public class WordDictionary {
                     String word = tokens[0];
                     // Default frequency
                     double freq = 3;
-                    if (tokens.length == 2)
-                        freq = Integer.valueOf(tokens[1]);
+                    if (tokens.length >= 2)
+                        freq = Double.valueOf(tokens[1]);
                     if (freq != 0d) {
                         total += freq;
                         word = addWord(word);
