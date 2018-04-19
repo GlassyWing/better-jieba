@@ -114,3 +114,8 @@ segmenter.suggestFreq(true,"中", "将");
 ```java
 [Candidate [key=中将, freq=494.0]]
 ```
+
+# 相关项目
+
+[better-jieba-solr](https://github.com/GlassyWing/better-jieba-solr) better-jieba到solr的适配包，支持HBase字典源导入
+[jieba python原版](https://github.com/fxsjy/jieba)
